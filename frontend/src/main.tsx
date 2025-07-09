@@ -1,13 +1,14 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import { ThemeProvider } from './components/theme-provider.tsx'
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-import { PlaybookList } from './pages/PlaybookList.tsx'
-import { PlaybookEditor } from './pages/PlaybookEditor.tsx'
-import Layout from './layout.tsx'
-import About from './pages/About.tsx'
-import Homepage from './pages/Homepage.tsx'
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import './index.css';
+import { ThemeProvider } from './components/theme-provider.tsx';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { PlaybookList } from './pages/PlaybookList.tsx';
+import { PlaybookEditor } from './pages/PlaybookEditor.tsx';
+import Layout from './layout.tsx';
+import About from './pages/About.tsx';
+import Homepage from './pages/Homepage.tsx';
+import { playbookApi } from './lib/api';
 
 const router = createBrowserRouter([
   {
@@ -16,30 +17,27 @@ const router = createBrowserRouter([
     children: [
       {
         path: '',
-        element: <Homepage />
+        element: <Homepage />,
       },
       {
         path: 'info',
-        element: <About />
+        element: <About />,
       },
       {
         path: 'playbooks',
-        element: <PlaybookList />
+        element: <PlaybookList />,
       },
       {
         path: 'playbook/:playbookId/edit',
         element: <PlaybookEditor />,
         loader: async ({ params }) => {
-          const res = await fetch(
-            `http://localhost:8080/playbook/${params.playbookId}`
-          )
-          if (!res.ok) throw new Error('Failed to fetch')
-          return res.json()
-        }
-      }
-    ]
-  }
-])
+          if (!params.playbookId) throw new Error('Playbook ID is required');
+          return await playbookApi.getById(params.playbookId);
+        },
+      },
+    ],
+  },
+]);
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -47,4 +45,4 @@ createRoot(document.getElementById('root')!).render(
       <RouterProvider router={router} />
     </ThemeProvider>
   </StrictMode>
-)
+);

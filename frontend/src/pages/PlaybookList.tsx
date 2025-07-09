@@ -1,22 +1,18 @@
-// App.tsx
-import PlaybookListEntry from '@/components/PlaybookListEntry'
-import { Button } from '@/components/ui/button'
-import { PlaybookEntry } from '@/lib/types'
-import { Plus, TriangleAlertIcon, Loader2Icon } from 'lucide-react'
-import useSWR from 'swr'
-
-// const playbooks = Array.from({ length: 20 }, (_, i) => ({
-//   id: i + 1,
-//   name: `Playbook ${i + 1}`,
-// }));
-
-const fetcher = (...args) => fetch(...args).then((res) => res.json())
+import PlaybookListEntry from '@/components/PlaybookListEntry';
+import { Button } from '@/components/ui/button';
+import { Plus, TriangleAlertIcon, Loader2Icon } from 'lucide-react';
+import useSWR from 'swr';
+import { playbookApi } from '@/lib/api';
+import { useSEO } from '@/hooks/useSEO';
+import { pageSEO } from '@/hooks/useSEO';
 
 export function PlaybookList() {
-  const { data, error, isLoading, mutate } = useSWR(
-    `http://localhost:8080/playbooks`,
-    fetcher
-  )
+  // Set SEO metadata for playbooks page
+  useSEO(pageSEO.playbooks);
+
+  const { data, error, isLoading, mutate } = useSWR('playbooks', () =>
+    playbookApi.getAll()
+  );
 
   if (error)
     return (
@@ -26,7 +22,7 @@ export function PlaybookList() {
           Failed to load
         </div>
       </div>
-    )
+    );
   if (isLoading)
     return (
       <div className="flex h-full flex-col items-center justify-center text-2xl font-mono">
@@ -35,48 +31,51 @@ export function PlaybookList() {
           Loading
         </div>
       </div>
-    )
+    );
 
-  function newPlaybook() {
-    fetch('http://localhost:8080/playbook', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    }).then(() => {
-      mutate()
-    })
+  async function newPlaybook() {
+    try {
+      await playbookApi.create();
+      mutate();
+    } catch (error) {
+      console.error('Failed to create playbook:', error);
+    }
   }
 
-  const playbooks: PlaybookEntry[] = data.data || []
+  const playbooks = data?.data || [];
 
   return (
-    <div className="mx-auto w-full mt-2">
-      <div className="p-2 px-4 border-b-1 pb-4">
-        <div className="flex items-center justify-between">
+    <div className="mx-auto w-full mt-2 px-2 md:px-0">
+      <div className="p-2 md:px-4 border-b-1 pb-4">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 md:gap-0">
           <div>
-            <span className="text-2xl font-semibold font-mono flex gap-x-2 items-center">
+            <span className="text-xl md:text-2xl font-semibold font-mono flex gap-x-2 items-center">
               Список плейбуков
             </span>
           </div>
           <Button
             variant="outline"
-            className="cursor-pointer"
+            className="cursor-pointer w-full md:w-auto"
             onClick={newPlaybook}
           >
             <Plus className="mr-2 h-4 w-4 text-blue-500" />
-            Создать новый плейбук
+            <span className="hidden sm:inline">Создать новый плейбук</span>
+            <span className="sm:hidden">Создать</span>
           </Button>
         </div>
       </div>
 
       <div className="p-0">
-        <div className="divide-y overflow-y-auto max-h-[90vh]">
-          {playbooks.map((playbook) => (
-            <PlaybookListEntry playbook={playbook} mutate={mutate} />
+        <div className="divide-y overflow-y-auto max-h-[calc(100vh-120px)] md:max-h-[90vh]">
+          {playbooks.map(playbook => (
+            <PlaybookListEntry
+              key={playbook.id}
+              playbook={playbook}
+              mutate={mutate}
+            />
           ))}
         </div>
       </div>
     </div>
-  )
+  );
 }

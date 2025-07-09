@@ -1,0 +1,89 @@
+run:
+  timeout: 5m
+  go: "1.23"
+
+linters:
+  enable:
+    - gofmt
+    - goimports
+    - govet
+    - errcheck
+    - staticcheck
+    - gosimple
+    - ineffassign
+    - typecheck
+    - unused
+    - misspell
+    - gosec
+    - gocyclo
+    - dupl
+    - gocritic
+    - godot
+    - gomnd
+    - goprintffuncname
+    - gosec
+    - gosimple
+    - govet
+    - ineffassign
+    - misspell
+    - staticcheck
+    - structcheck
+    - typecheck
+    - unused
+    - varcheck
+    - whitespace
+
+linters-settings:
+  gocyclo:
+    min-complexity: 15
+  dupl:
+    threshold: 100
+  gocritic:
+    enabled-tags:
+      - diagnostic
+      - experimental
+      - opinionated
+      - performance
+      - style
+    disabled-checks:
+      - commentFormatting
+      - ifElseChain
+      - octalLiteral
+      - whyNoLint
+  gosec:
+    excludes:
+      - G404 # Use of weak random number generator (math/rand instead of crypto/rand)
+  govet:
+    check-shadowing: true
+  gomnd:
+    checks: argument,case,condition,operation,return,assign
+  goprintffuncname:
+    prefix: "log"
+  whitespace:
+    multi-if: false
+    multi-func: false
+
+issues:
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - gomnd
+        - gocyclo
+        - dupl
+        - gosec
+        - errcheck
+        - gocritic
+        - gosec
+        - gosimple
+        - govet
+        - ineffassign
+        - misspell
+        - staticcheck
+        - structcheck
+        - typecheck
+        - unused
+        - varcheck
+        - whitespace
+  exclude-use-default: false
+  max-issues-per-linter: 0
+  max-same-issues: 0 
