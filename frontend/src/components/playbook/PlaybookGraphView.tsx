@@ -1,10 +1,4 @@
-import {
-  Background,
-  Controls,
-  Edge,
-  Node,
-  ReactFlow,
-} from '@xyflow/react';
+import { Background, Controls, Edge, Node, ReactFlow } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import StartNode from '@/components/nodes/StartNode';
 import EndNode from '@/components/nodes/EndNode';

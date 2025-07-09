@@ -17,7 +17,6 @@ const ActionNode = memo(
     isConnectable: boolean;
     selected: boolean;
   }) => {
-
     return (
       <div className="w-[200px]">
         <Handle

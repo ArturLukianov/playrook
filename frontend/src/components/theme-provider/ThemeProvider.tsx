@@ -1,5 +1,10 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { Theme, ThemeProviderProps, ThemeProviderState, initialState } from './constants';
+import {
+  Theme,
+  ThemeProviderProps,
+  ThemeProviderState,
+  initialState,
+} from './constants';
 
 const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
 
@@ -53,4 +58,4 @@ export const useTheme = () => {
     throw new Error('useTheme must be used within a ThemeProvider');
 
   return context;
-}; 
+};
