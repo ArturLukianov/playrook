@@ -1,5 +1,5 @@
-import React, { memo } from "react";
-import { Handle, Position } from "@xyflow/react";
+import React, { memo } from 'react'
+import { Handle, Position } from '@xyflow/react'
 
 export default memo(({ data, isConnectable }) => {
   return (
@@ -22,5 +22,5 @@ export default memo(({ data, isConnectable }) => {
         className="opacity-0"
       />
     </div>
-  );
-});
+  )
+})

@@ -125,3 +125,29 @@ func UpdatePlaybook(c *gin.Context) {
 	playbook.RawData = input.RawData
 	core.GetDB().Save(playbook)
 }
+
+// Add this function to the handlers package
+func DeletePlaybook(c *gin.Context) {
+	id, found := c.Params.Get("id")
+	if !found {
+		c.JSON(400, gin.H{"error": "missing id parameter"})
+		return
+	}
+
+	var playbook models.Playbook
+	result := core.GetDB().First(&playbook, id)
+	if result.Error != nil {
+		c.JSON(404, gin.H{"error": "playbook not found"})
+		return
+	}
+
+	// Delete the playbook from the database
+	if err := core.GetDB().Delete(&playbook).Error; err != nil {
+		c.JSON(500, gin.H{"error": "failed to delete playbook: " + err.Error()})
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"data": "playbook deleted successfully",
+	})
+}

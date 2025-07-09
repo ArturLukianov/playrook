@@ -32,6 +32,7 @@ func main() {
 	router.GET("/playbooks", handlers.ListPlaybooks)
 	router.GET("/playbook/:id", handlers.GetPlaybook)
 	router.PUT("/playbook/:id", handlers.UpdatePlaybook)
+	router.DELETE("/playbook/:id", handlers.DeletePlaybook)
 	router.POST("/playbook", handlers.CreatePlaybook)
 
 	router.Run() // listen and serve on 0.0.0.0:8080
