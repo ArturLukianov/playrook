@@ -1,38 +1,53 @@
 version: '3.8'
 
 services:
-  playrook:
+  # Development services with nginx proxy
+  frontend:
     build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "8080:8080"
-    environment:
-      - GIN_MODE=release
-    volumes:
-      - ./data:/root/data
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
-
-  # Development service with hot reload
-  playrook-dev:
-    build:
-      context: .
+      context: ./frontend
       dockerfile: Dockerfile.dev
-    ports:
-      - "8080:8080"
-      - "3000:3000"
+    environment:
+      - VITE_API_BASE_URL=http://localhost/api
+    volumes:
+      - ./frontend:/app/frontend
+      - /app/frontend/node_modules
+    profiles:
+      - dev
+    networks:
+      - playrook-network
+    expose:
+      - "3000"
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
     environment:
       - GIN_MODE=debug
     volumes:
       - ./backend:/app/backend
-      - ./frontend:/app/frontend
-      - /app/frontend/node_modules
-      - /app/backend/vendor
+      - ./data:/app/data
     profiles:
-      - dev 
+      - dev
+    networks:
+      - playrook-network
+    expose:
+      - "8080"
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.dev.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - frontend
+      - backend
+    profiles:
+      - dev
+    networks:
+      - playrook-network
+
+networks:
+  playrook-network:
+    driver: bridge

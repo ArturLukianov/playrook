@@ -70,8 +70,23 @@ docker-run:
 
 # Development environment
 dev:
-	@echo "Starting development environment..."
+	@echo "Starting development environment with nginx proxy..."
 	docker-compose --profile dev up --build
+
+# Development environment without nginx (direct access)
+dev-direct:
+	@echo "Starting development environment (direct access)..."
+	docker-compose --profile dev up --build frontend backend
+
+# Production environment
+prod:
+	@echo "Starting production environment..."
+	docker-compose -f docker-compose.prod.yml up --build
+
+# Production environment in background
+prod-daemon:
+	@echo "Starting production environment in background..."
+	docker-compose -f docker-compose.prod.yml up -d --build
 
 # CI tasks
 ci-install: install

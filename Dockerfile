@@ -6,6 +6,8 @@ WORKDIR /app/frontend
 COPY frontend/package*.json ./
 RUN npm ci
 COPY frontend/ ./
+# Set API URL for production build
+ENV VITE_API_BASE_URL=/api
 RUN npm run build
 
 # Stage 2: Build backend

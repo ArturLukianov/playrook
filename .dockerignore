@@ -122,4 +122,5 @@ Thumbs.db
 # Docker
 Dockerfile*
 docker-compose*
-.dockerignore 
+.dockerignore
+nginx*.conf 
