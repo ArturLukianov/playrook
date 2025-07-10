@@ -23,4 +23,4 @@ const localStorageMock = {
   removeItem: vi.fn(),
   clear: vi.fn(),
 };
-global.localStorage = localStorageMock; 
+global.localStorage = localStorageMock;

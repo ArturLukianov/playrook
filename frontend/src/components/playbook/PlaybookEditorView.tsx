@@ -21,39 +21,41 @@ export function PlaybookEditorView({
 
   const validatePlaybook = (content: string): ValidationError[] => {
     const errors: ValidationError[] = [];
-    
+
     if (!content || content.trim().length === 0) {
       errors.push({ message: 'Playbook content cannot be empty' });
       return errors;
     }
 
     const lines = content.split('\n');
-    
+
     // Check for required sections
-    const hasStart = content.includes('# Start');
+    const hasStart = content.includes('# ');
     const hasNodes = content.includes('## ');
-    
+
     if (!hasStart) {
-      errors.push({ message: 'Playbook must have a # Start section' });
+      errors.push({ message: 'Playbook must have a # section' });
     }
-    
+
     if (!hasNodes) {
-      errors.push({ message: 'Playbook must have at least one node (## section)' });
+      errors.push({
+        message: 'Playbook must have at least one node (## section)',
+      });
     }
 
     // Check for basic syntax
     lines.forEach((line, index) => {
       if (line.trim().startsWith('## ') && line.trim().length <= 4) {
-        errors.push({ 
-          message: 'Node titles cannot be empty', 
-          line: index + 1 
+        errors.push({
+          message: 'Node titles cannot be empty',
+          line: index + 1,
         });
       }
-      
+
       if (line.trim().startsWith('### ') && line.trim().length <= 5) {
-        errors.push({ 
-          message: 'Action titles cannot be empty', 
-          line: index + 1 
+        errors.push({
+          message: 'Action titles cannot be empty',
+          line: index + 1,
         });
       }
     });
@@ -95,7 +97,7 @@ export function PlaybookEditorView({
           </ul>
         </div>
       )}
-      
+
       {isValid && value && value.trim().length > 0 && (
         <div className="p-2 bg-green-950 border border-green-500 rounded-md mb-2">
           <div className="flex items-center gap-2 text-green-300">

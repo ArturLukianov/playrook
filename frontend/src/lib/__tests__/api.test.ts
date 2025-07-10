@@ -15,27 +15,29 @@ describe('playbookApi', () => {
       const mockResponse = {
         data: [
           { id: 1, name: 'Test Playbook 1' },
-          { id: 2, name: 'Test Playbook 2' }
-        ]
+          { id: 2, name: 'Test Playbook 2' },
+        ],
       };
 
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        json: async () => mockResponse
+        json: async () => mockResponse,
       } as Response);
 
       const result = await playbookApi.getAll();
-      
+
       expect(fetch).toHaveBeenCalledWith('http://localhost:8080/playbooks');
       expect(result).toEqual(mockResponse);
     });
 
     it('should throw error when fetch fails', async () => {
       mockFetch.mockResolvedValueOnce({
-        ok: false
+        ok: false,
       } as Response);
 
-      await expect(playbookApi.getAll()).rejects.toThrow('Failed to fetch playbooks');
+      await expect(playbookApi.getAll()).rejects.toThrow(
+        'Failed to fetch playbooks'
+      );
     });
   });
 
@@ -45,39 +47,41 @@ describe('playbookApi', () => {
         data: {
           name: 'Test Playbook',
           start_node: 'start',
-          nodes: {}
+          nodes: {},
         },
-        raw_data: '# Start\n## Test Node'
+        raw_data: '# Start\n## Test Node',
       };
 
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        json: async () => mockResponse
+        json: async () => mockResponse,
       } as Response);
 
       const result = await playbookApi.getById('1');
-      
+
       expect(fetch).toHaveBeenCalledWith('http://localhost:8080/playbook/1');
       expect(result).toEqual(mockResponse);
     });
 
     it('should throw error when fetch fails', async () => {
       mockFetch.mockResolvedValueOnce({
-        ok: false
+        ok: false,
       } as Response);
 
-      await expect(playbookApi.getById('1')).rejects.toThrow('Failed to fetch playbook');
+      await expect(playbookApi.getById('1')).rejects.toThrow(
+        'Failed to fetch playbook'
+      );
     });
   });
 
   describe('create', () => {
     it('should create playbook successfully', async () => {
       mockFetch.mockResolvedValueOnce({
-        ok: true
+        ok: true,
       } as Response);
 
       await expect(playbookApi.create()).resolves.not.toThrow();
-      
+
       expect(fetch).toHaveBeenCalledWith('http://localhost:8080/playbook', {
         method: 'POST',
         headers: {
@@ -88,10 +92,12 @@ describe('playbookApi', () => {
 
     it('should throw error when creation fails', async () => {
       mockFetch.mockResolvedValueOnce({
-        ok: false
+        ok: false,
       } as Response);
 
-      await expect(playbookApi.create()).rejects.toThrow('Failed to create playbook');
+      await expect(playbookApi.create()).rejects.toThrow(
+        'Failed to create playbook'
+      );
     });
   });
 
@@ -99,15 +105,15 @@ describe('playbookApi', () => {
     it('should update playbook successfully', async () => {
       const updateData = {
         data: { name: 'Updated Playbook', start: 'start', nodes: {} },
-        raw_data: '# Start\n## Updated Node'
+        raw_data: '# Start\n## Updated Node',
       };
 
       mockFetch.mockResolvedValueOnce({
-        ok: true
+        ok: true,
       } as Response);
 
       await expect(playbookApi.update('1', updateData)).resolves.not.toThrow();
-      
+
       expect(fetch).toHaveBeenCalledWith('http://localhost:8080/playbook/1', {
         method: 'PUT',
         headers: {
@@ -119,21 +125,26 @@ describe('playbookApi', () => {
 
     it('should throw error when update fails', async () => {
       mockFetch.mockResolvedValueOnce({
-        ok: false
+        ok: false,
       } as Response);
 
-      await expect(playbookApi.update('1', { data: { name: 'Test', start: 'start', nodes: {} }, raw_data: '' })).rejects.toThrow('Failed to update playbook');
+      await expect(
+        playbookApi.update('1', {
+          data: { name: 'Test', start: 'start', nodes: {} },
+          raw_data: '',
+        })
+      ).rejects.toThrow('Failed to update playbook');
     });
   });
 
   describe('delete', () => {
     it('should delete playbook successfully', async () => {
       mockFetch.mockResolvedValueOnce({
-        ok: true
+        ok: true,
       } as Response);
 
       await expect(playbookApi.delete(1)).resolves.not.toThrow();
-      
+
       expect(fetch).toHaveBeenCalledWith('http://localhost:8080/playbook/1', {
         method: 'DELETE',
       });
@@ -141,10 +152,12 @@ describe('playbookApi', () => {
 
     it('should throw error when deletion fails', async () => {
       mockFetch.mockResolvedValueOnce({
-        ok: false
+        ok: false,
       } as Response);
 
-      await expect(playbookApi.delete(1)).rejects.toThrow('Failed to delete playbook');
+      await expect(playbookApi.delete(1)).rejects.toThrow(
+        'Failed to delete playbook'
+      );
     });
   });
-}); 
+});

@@ -51,13 +51,13 @@ export function PlaybookEditor() {
         setSaveState('error');
         return;
       }
-      
+
       await playbookApi.update(playbookId, {
         data: playbook,
         raw_data: playbookRaw || '',
       });
       setSaveState('saved');
-      
+
       // Clear saved state after 3 seconds
       setTimeout(() => {
         setSaveState('');
@@ -65,7 +65,7 @@ export function PlaybookEditor() {
     } catch (error) {
       console.error('Failed to save playbook:', error);
       setSaveState('error');
-      
+
       // Clear error state after 5 seconds
       setTimeout(() => {
         setSaveState('');

@@ -148,7 +148,7 @@ func UpdatePlaybook(c *gin.Context) {
 	playbook.Data = string(jsonBytes)
 	playbook.Name = playbookData.Name
 	playbook.RawData = input.RawData
-	
+
 	saveResult := core.GetDB().Save(playbook)
 	if saveResult.Error != nil {
 		c.JSON(500, gin.H{"error": "Failed to save playbook: " + saveResult.Error.Error()})
