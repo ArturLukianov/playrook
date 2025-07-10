@@ -47,15 +47,29 @@ export function PlaybookEditor() {
 
     setSaveState('saving');
     try {
-      if (!playbookId) return;
+      if (!playbookId) {
+        setSaveState('error');
+        return;
+      }
+      
       await playbookApi.update(playbookId, {
         data: playbook,
         raw_data: playbookRaw || '',
       });
       setSaveState('saved');
+      
+      // Clear saved state after 3 seconds
+      setTimeout(() => {
+        setSaveState('');
+      }, 3000);
     } catch (error) {
       console.error('Failed to save playbook:', error);
       setSaveState('error');
+      
+      // Clear error state after 5 seconds
+      setTimeout(() => {
+        setSaveState('');
+      }, 5000);
     }
   }
 

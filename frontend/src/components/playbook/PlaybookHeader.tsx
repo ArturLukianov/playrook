@@ -39,13 +39,27 @@ export function PlaybookHeader({
       </h1>
       <Button
         variant="outline"
-        className="cursor-pointer order-2 md:order-3 flex-1 md:flex-none"
+        className={`cursor-pointer order-2 md:order-3 flex-1 md:flex-none ${
+          saveState === 'error' ? 'border-red-500 text-red-500' : 
+          saveState === 'saved' ? 'border-green-500 text-green-500' : ''
+        }`}
         onClick={onSave}
+        disabled={saveState === 'saving'}
       >
         {saveState === 'saving' ? (
           <>
             <Loader2Icon className="animate-spin" />
             <span className="hidden sm:inline ml-1">Сохраняю..</span>
+          </>
+        ) : saveState === 'saved' ? (
+          <>
+            <SaveIcon className="text-green-500" />
+            <span className="hidden sm:inline ml-1">Сохранено</span>
+          </>
+        ) : saveState === 'error' ? (
+          <>
+            <SaveIcon className="text-red-500" />
+            <span className="hidden sm:inline ml-1">Ошибка</span>
           </>
         ) : (
           <>

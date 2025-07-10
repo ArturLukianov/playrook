@@ -59,7 +59,11 @@ func CreatePlaybook(c *gin.Context) {
 	playbook := &models.Playbook{}
 	playbook.Name = "New playbook"
 
-	core.GetDB().Create(playbook)
+	result := core.GetDB().Create(playbook)
+	if result.Error != nil {
+		c.JSON(500, gin.H{"error": "Failed to create playbook: " + result.Error.Error()})
+		return
+	}
 
 	c.JSON(200, gin.H{
 		"data": "ok",
@@ -99,16 +103,37 @@ func UpdatePlaybook(c *gin.Context) {
 	}
 
 	var playbook *models.Playbook
-	core.GetDB().First(&playbook, id)
-	if playbook == nil {
+	result := core.GetDB().First(&playbook, id)
+	if result.Error != nil {
 		c.JSON(404, gin.H{"error": "playbook not found"})
 		return
 	}
 
-	// var playbookData PlaybookData
 	var input UpdatePlaybookInput
 	if err := c.BindJSON(&input); err != nil {
-		c.JSON(400, gin.H{"error": err.Error()})
+		c.JSON(400, gin.H{"error": "Invalid JSON format: " + err.Error()})
+		return
+	}
+
+	// Validate input data
+	if input.Data.Name == "" {
+		c.JSON(400, gin.H{"error": "Playbook name cannot be empty"})
+		return
+	}
+
+	if input.Data.StartNode == "" {
+		c.JSON(400, gin.H{"error": "Start node cannot be empty"})
+		return
+	}
+
+	if len(input.Data.Nodes) == 0 {
+		c.JSON(400, gin.H{"error": "Playbook must have at least one node"})
+		return
+	}
+
+	// Validate that start node exists in nodes
+	if _, exists := input.Data.Nodes[input.Data.StartNode]; !exists {
+		c.JSON(400, gin.H{"error": "Start node must exist in the playbook nodes"})
 		return
 	}
 
@@ -116,14 +141,21 @@ func UpdatePlaybook(c *gin.Context) {
 
 	jsonBytes, err := json.Marshal(playbookData)
 	if err != nil {
-		c.JSON(500, gin.H{"error": err.Error()})
+		c.JSON(500, gin.H{"error": "Failed to serialize playbook data: " + err.Error()})
 		return
 	}
 
 	playbook.Data = string(jsonBytes)
 	playbook.Name = playbookData.Name
 	playbook.RawData = input.RawData
-	core.GetDB().Save(playbook)
+	
+	saveResult := core.GetDB().Save(playbook)
+	if saveResult.Error != nil {
+		c.JSON(500, gin.H{"error": "Failed to save playbook: " + saveResult.Error.Error()})
+		return
+	}
+
+	c.JSON(200, gin.H{"data": "playbook updated successfully"})
 }
 
 // Add this function to the handlers package

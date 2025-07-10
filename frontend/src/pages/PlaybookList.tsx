@@ -39,6 +39,7 @@ export function PlaybookList() {
       mutate();
     } catch (error) {
       console.error('Failed to create playbook:', error);
+      // You could add a toast notification here
     }
   }
 
