@@ -1,4 +1,5 @@
 FROM golang:1.23-alpine
+RUN apk add build-base
 
 # Install air for hot reloading
 RUN go install github.com/cosmtrek/air@latest
